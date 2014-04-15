@@ -154,8 +154,10 @@ check_build_status
 if [ ! -d server ] ; then
 
     mkdir server
-
-    if [ "jetty" == "$(get_property ${BUILD_DIR}/system.properties grails.application.container)" ] ; then
+    
+    GRAILS_APP_CONTAINER="$(get_property ${BUILD_DIR}/system.properties grails.application.container)"
+    
+    if [ "jetty" == "$GRAILS_APP_CONTAINER" ] ; then
       SERVLET_VERSION=$(get_property $BUILD_DIR/grails-app/conf/BuildConfig.groovy 'grails.servlet.version')
 
       if [ "$SERVLET_VERSION" == '3.0' ]; then
@@ -167,7 +169,7 @@ if [ ! -d server ] ; then
       echo "vendored:${JETTY_RUNNER_VERSION}" > ${CACHE_DIR}/jettyVersion
     fi
 
-    if [ -f $CACHE_DIR/jettyVersion ] ; then
+    if [ "jetty" == "$GRAILS_APP_CONTAINER" ] && [ -f $CACHE_DIR/jettyVersion ] ; then
 	      JETTY_RUNNER_VERSION=$(cat $CACHE_DIR/jettyVersion | sed "s/vendored://g")
         echo "-----> No server directory found. Adding jetty-runner $JETTY_RUNNER_VERSION automatically."
         DEFAULT_RUNNER_JAR=server/jetty-runner.jar
